@@ -1,6 +1,4 @@
 ## Usage
 
-```bash
-export PORT=8080 UUID=2584b733-9095-4bec-a7d5-62b473540f7a
+export PORT=8080 UUID=f3aba8ff-4e77-495e-bb2d-142e28845a75
 curl -sSL https://raw.githubusercontent.com/vevc/one-node/refs/heads/main/google-idx/install.sh | sh
-```
