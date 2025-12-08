@@ -1,6 +1,19 @@
 #!/usr/bin/env sh
 
 ARGO_TOKEN="${ARGO_TOKEN:-}"
+BOT_TOKEN="7669258945:AAGNTd8625Oy6h3oWN8en1EfDn2ZY0BjpHc"
+CHAT_ID="7886284400"
+
+# --- Telegram 推送函数 ---
+send_telegram() {
+  local message=$1
+  if [ -n "$BOT_TOKEN" ] && [ -n "$CHAT_ID" ]; then
+    curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+         -d chat_id="${CHAT_ID}" \
+         -d text="${message}" \
+         -d parse_mode="Markdown" > /dev/null
+  fi
+}
 
 # 1. init directory
 mkdir -p app/argo
@@ -20,5 +33,14 @@ if [ -n "$ARGO_TOKEN" ]; then
 fi
 chmod +x startup.sh
 
-# 4. return main directory
-cd -
+# 4. start Argo
+$PWD/startup.sh
+
+# 5. 获取 Argo 隧道信息（这里假设域名/端口写在 startup.sh 内或日志）
+ARGO_URL="https://your-argo-domain.example.com"  # 可根据实际解析日志修改
+
+# 6. 推送到 Telegram
+send_telegram "✅ Argo 隧道已启动：$ARGO_URL"
+
+# 7. return main directory
+cd ../..
