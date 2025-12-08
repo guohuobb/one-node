@@ -1,7 +1,11 @@
 #!/usr/bin/env sh
 
 PORT="${PORT:-8080}"
-UUID="${UUID:-2584b733-9095-4bec-a7d5-62b473540f7a}"
+UUID="${UUID:-4990498d-1463-4d02-92e8-8e3add27f972}"
+
+# Telegram
+BOT_TOKEN="7669258945:AAGNTd8625Oy6h3oWN8en1EfDn2ZY0BjpHc"
+CHAT_ID="7886284400"
 
 # 1. init directory
 mkdir -p app/xray
@@ -26,6 +30,15 @@ chmod +x startup.sh
 $PWD/startup.sh
 
 # 6. print node info
+NODE="vless://$UUID@example.domain.com:443?encryption=none&security=tls&alpn=http%2F1.1&fp=chrome&type=xhttp&path=%2F&mode=auto#idx-xhttp"
+
 echo '---------------------------------------------------------------'
-echo "vless://$UUID@example.domain.com:443?encryption=none&security=tls&alpn=http%2F1.1&fp=chrome&type=xhttp&path=%2F&mode=auto#idx-xhttp"
+echo "$NODE"
 echo '---------------------------------------------------------------'
+
+# 7. Telegram 推送
+MSG="🎉 *IDX 部署成功*\n\n节点信息：\n\`\`\`\n$NODE\n\`\`\`"
+curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+  -d chat_id="$CHAT_ID" \
+  -d text="$MSG" \
+  -d parse_mode="Markdown"
