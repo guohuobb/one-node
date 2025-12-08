@@ -5,7 +5,7 @@
   "inbounds": [
     {
       "listen": null,
-      "port": $PORT,
+      "port": 8090,
       "protocol": "vless",
       "settings": {
         "decryption": "none",
