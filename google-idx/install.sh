@@ -2,14 +2,8 @@
 
 PORT="${PORT:-8080}"
 UUID="${UUID:-2584b733-9095-4bec-a7d5-62b473540f7a}"
-
 BOT_TOKEN="${BOT_TOKEN:-7669258945:AAGNTd8625Oy6h3oWN8en1EfDn2ZY0BjpHc}"
 CHAT_ID="${CHAT_ID:-7886284400}"
-
-# 哪吒参数（请提前 export 或直接写死）
-NEZHA_SERVER="${NEZHA_SERVER:-z.kkkk.hidns.co:80}"
-NEZHA_KEY="${NEZHA_KEY:-ZPRVZUoCu50Wz0ZiL4mSf2zZelRDh1K5}"
-NEZHA_VERSION="${NEZHA_VERSION:-V1}"
 
 # 1. init directory
 mkdir -p app/xray
@@ -33,37 +27,18 @@ chmod +x startup.sh
 # 5. 生成节点链接（推送用）
 NODE_URL="vless://$UUID@example.domain.com:443?encryption=none&security=tls&alpn=http%2F1.1&fp=chrome&type=xhttp&path=%2F&mode=auto#idx-xhttp"
 
-# -------------------------
-# 6. 加入哪吒探针（自动后台运行）
-# -------------------------
-echo "启动哪吒探针客户端..."
-
-if [ "$NEZHA_VERSION" = "V1" ]; then
-    wget -O nezha-agent https://github.com/naiba/nezha/releases/latest/download/nezha-agent_linux_amd64
-    chmod +x nezha-agent
-    nohup ./nezha-agent -s "$NEZHA_SERVER" -p "$NEZHA_KEY" >/dev/null 2>&1 &
-else
-    wget -O nezha-agent https://github.com/naiba/nezha/releases/latest/download/nezha-agent_linux_amd64
-    chmod +x nezha-agent
-    nohup ./nezha-agent -s "$NEZHA_SERVER" -p "$NEZHA_KEY" --v0 >/dev/null 2>&1 &
-fi
-
-echo "哪吒探针已运行..."
-
-# -------------------------
-# 7. Telegram 推送
-# -------------------------
+# 6. 立即推送 Telegram（不会被阻塞）
 curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
  -d chat_id="$CHAT_ID" \
- -d text="IDX 节点已部署成功并绑定哪吒探针：
+ -d text="IDX 节点已部署成功：
 
 $NODE_URL
 "
 
-# 8. 启动 Xray（后台运行）
+# 7. 启动 Xray（后台运行，不阻塞）
 nohup $PWD/startup.sh >/dev/null 2>&1 &
 
-# 9. 本地输出
+# 8. 本地输出
 echo '---------------------------------------------------------------'
 echo "$NODE_URL"
 echo '---------------------------------------------------------------'
